@@ -1,0 +1,134 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+Chapter 2.2
+
+```{r echo=TRUE}
+##########
+# 2.2
+
+rm(list=ls())
+
+library(tidyverse)
+library(plyr)
+library(scales)
+
+Campaign_Year = c(seq(from = 2010, to = 2019))
+Meals_Served = c(40139,
+  127020,
+  168193,
+  153115,
+  202102,
+  232897,
+  277912,
+  205350,
+  233389,
+  232797)
+
+data = as.data.frame(cbind(Campaign_Year, Meals_Served))
+
+data
+```
+
+Data preparation done, so let's draw
+```{r echo=TRUE}
+plot_colour1 = "#008612"
+
+ggplot(data = data, aes(x=Campaign_Year, y=Meals_Served)) +
+  geom_bar(stat="identity", fill = plot_colour1) +
+  
+  scale_x_continuous(breaks=seq(2010,2019)) +
+  scale_y_continuous(breaks= pretty_breaks())+
+  
+
+  
+  theme(legend.position="none", 
+  panel.background = element_blank(),
+  axis.line = element_line(colour="#C0C0C0",size=1), 
+  axis.text=element_text(face="plain",colour="#C0C0C0",size=12), #change size and colour of axis labels (use face="bold" to make bold)
+  axis.ticks = element_blank() # change colour (and size) of axis ticksggplot change
+  ) +
+
+labs(x = "xlab", y = "ylab", #add text to graph
+title = "Title",
+subtitle = "subtitle",
+caption = "Caption")
+```
+Let's also do the line plot
+```{r}
+ggplot(data = data, aes(Campaign_Year, Meals_Served)) +
+  geom_line(size = 1, colour = plot_colour1) +
+ 
+  
+  #library(scales)
+  scale_x_continuous(breaks= pretty_breaks()) +
+  scale_y_continuous(breaks= pretty_breaks()) +
+  
+  #add single data points as labels
+  geom_point(aes(x=first(data[,1]), y=first(data[,2])), colour = plot_colour1, size = 4) +
+  geom_point(aes(x=last(data[,1]), y=last(data[,2])), colour = plot_colour1, size = 4) +
+  geom_text(data = subset(data, Campaign_Year == c(first(data[,1]),last(data[,1]))),
+    aes(label=Meals_Served),vjust=-1, colour = plot_colour1) +
+
+  labs(x = "xlab", y = "ylab", #add text to graph
+  title = "Title",
+  subtitle = "subtitle",
+  caption = "Caption") +
+    
+  theme(legend.position="none", 
+  panel.background = element_blank(),
+  axis.line = element_line(colour="#C0C0C0",size=1),
+  axis.text=element_text(face="plain",colour="#C0C0C0",size=12), #change size and colour of axis labels (use face="bold" to make bold)
+  axis.ticks = element_line(colour="#C0C0C0",size=1) # change colour (and size) of axis ticksggplot change
+  )
+```
+
+reading new data in (ex. 2.3) and getting into long format
+
+```{r}
+data = read.csv2("data_22.csv", header = TRUE, stringsAsFactors = FALSE)
+
+library(stringr)
+
+data[,2] = str_replace_all(data[,2]," ", "")
+data[,3] = str_replace_all(data[,3]," ", "")
+
+colnames(data)[1] <- "DATE" #correct 
+
+data[,2:3] <- as.numeric(as.character(unlist(data[,2:3])))
+library(lubridate)
+Sys.setlocale("LC_TIME","English")
+data$DATE = parse_date_time(data$DATE, "ym")
+
+data_long = gather(data, "CAPACITY", "DEMAND", key = TYPE, value = AMOUNT)
+```
+
+```{r}
+ggplot(data = data_long, aes(x=DATE, y=AMOUNT)) +
+  geom_bar(stat="identity", aes(fill = TYPE), position = "dodge") +
+
+  
+  labs(x = "xlab", y = "ylab", #add text to graph
+  title = "Title",
+  subtitle = "subtitle",
+  caption = "Caption") +
+  
+  scale_fill_discrete(name = "", labels = c("Capacity", "Demand")) +
+  
+  scale_fill_manual(values=c("green3", "green4")) +
+  
+  theme(
+  # legend.position="none", 
+  panel.background = element_blank(),
+  axis.line = element_line(colour="#C0C0C0",size=1),
+  axis.text=element_text(face="plain",colour="#C0C0C0",size=9), #change size and colour of axis labels (use face="bold" to make bold)
+  axis.ticks = element_line(colour="#C0C0C0",size=1) # change colour (and size) of axis ticksggplot change
+  )
+  
+  
+```
+
