@@ -118,7 +118,7 @@ input, select, textarea {
 
 		a:hover {
 			border-bottom-color: transparent;
-			color: #fd0000 !important; /* COMMENT: CHANGE COLOR OF HOVERING TEXT MARC 1 */
+			color: #060057 !important; /* COMMENT: CHANGE COLOR OF HOVERING TEXT MARC 1 */
 		}
 
 	strong, b {
@@ -3077,7 +3077,7 @@ input, select, textarea {
 					}
 
 					#titleBar .toggle:before {
-						background: #ff0000;
+						background: #0899b3; /* COMMENT: CHANGE COLOR of MENU BUTTON (when menu is hidden) TEXT MARC1 */
 						color: #ffffff;
 						content: '\f0c9';
 						display: block;
